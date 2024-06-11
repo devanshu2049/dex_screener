@@ -12,11 +12,6 @@ interface User {
     updatedAt: Date;
 }
 
-interface User {
-    user_id: number;
-    email: string;
-    address: string;
-}
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -52,7 +47,7 @@ export const authOptions: NextAuthOptions = {
                         throw new Error("Incorrect Password")
                     }
                 } catch(error:any) {
-                    throw new Error(error);
+                    throw new Error(error.message || 'An Error Occurred');
                 }
             }
         })

@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Sidebar from '../ui/Sidebar';
 import TabNavigation from '../ui/TabNavigation';
@@ -29,14 +29,23 @@ export default function Dashboard() {
 
 
   useEffect(() => {
+    let timerId:any;
     if (status === "loading") return;
 
     if (status === "unauthenticated") {
-      return;
+      timerId = setTimeout(() => {
+        router.replace('/signin');
+      }, 2000)
     }
     if (!session) {
+      timerId = setTimeout(() => {
+        router.replace('/signin');
+      }, 2000)
       router.replace('/signin');
     }
+    return (() => {
+      clearTimeout(timerId);
+    })
   }, [session, status, router]);
 
   useEffect(() => {
@@ -113,6 +122,7 @@ export default function Dashboard() {
 
 
   return (
+    <Suspense>
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 bg-gray-100 p-4">
@@ -123,6 +133,7 @@ export default function Dashboard() {
         <TableList txns={swapTxn} />
       </div>
     </div>
+    </Suspense>
   );
 }
 
