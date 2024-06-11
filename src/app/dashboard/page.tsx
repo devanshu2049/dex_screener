@@ -127,18 +127,30 @@ export default function Dashboard() {
 
 
   return (
-    <Suspense>
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 bg-gray-100 p-4">
-        <div className="flex justify-between items-center mb-4">
-          <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
-          <SelectDropdown chainOptions={chainOptions} setSelectedChain={setSelectedChain} />
+<Suspense>
+      <div className="flex flex-col lg:flex-row h-screen">
+        <Sidebar />
+        <div className="flex-1 bg-gray-100 p-4 overflow-auto">
+          <div className="flex flex-col lg:flex-row justify-between items-center mb-4 space-y-4 lg:space-y-0">
+            <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
+            {/* <SelectDropdown chainOptions={chainOptions} setSelectedChain={setSelectedChain} /> */}
+          </div>
+          <TableList txns={swapTxn} isLoading={isLoading} />
         </div>
-        <TableList txns={swapTxn} isLoading={isLoading}/>
       </div>
-    </div>
     </Suspense>
+    // <Suspense>
+    // <div className="flex h-screen">
+    //   <Sidebar />
+    //   <div className="flex-1 bg-gray-100 p-4">
+    //     <div className="flex justify-between items-center mb-4">
+    //       <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
+    //       <SelectDropdown chainOptions={chainOptions} setSelectedChain={setSelectedChain} />
+    //     </div>
+    //     <TableList txns={swapTxn} isLoading={isLoading}/>
+    //   </div>
+    // </div>
+    // </Suspense>
   );
 }
 

@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 
 export default function TableList({ txns, isLoading }:any) {
-
-
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 7;
   const formatTxns = (txns: string) => {
     return `${txns.slice(0, 2)}...${txns.slice(-3)}`;
   };
@@ -21,12 +22,16 @@ export default function TableList({ txns, isLoading }:any) {
   }
   
   txns.sort((a: any, b: any) => b.transaction.timestamp - a.transaction.timestamp);
+
+  const paginatedData = txns.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+  const totalPages = Math.ceil(txns.length / rowsPerPage);
   return (
-    <Card className='h-screen overflow-auto'>
+    <Card className='h-full'>
       <CardHeader>
-        <CardTitle>Token Data</CardTitle>
+        <CardTitle>DEX Swap Transactions</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-hidden h-full flex flex-col">
+      <div className="flex-1 overflow-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -41,7 +46,7 @@ export default function TableList({ txns, isLoading }:any) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {txns.map((row: any, index: any) => (
+            {paginatedData.map((row: any, index: any) => (
               <TableRow key={index}>
                 <TableCell>    <a
       href={`https://${row.dex === "uniswap" ? "etherscan.io" : "bscscan.com"}/tx/${row.transaction.id}`}
@@ -61,6 +66,24 @@ export default function TableList({ txns, isLoading }:any) {
             ))}
           </TableBody>
         </Table>
+        </div>
+        <div className="flex justify-between items-center mt-4 space-x-2">
+          <button
+            className="py-2 px-4 bg-gray-400 rounded disabled:opacity-50"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span>{`Page ${currentPage} of ${totalPages}`}</span>
+          <button
+            className="py-2 px-4 bg-gray-400 rounded disabled:opacity-50"
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
       </CardContent>
     </Card>
   );
