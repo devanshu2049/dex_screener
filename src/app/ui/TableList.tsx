@@ -4,12 +4,22 @@ import { Table, TableHead, TableRow, TableCell, TableBody, TableHeader } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 
-export default function TableList({ txns }:any) {
+export default function TableList({ txns, isLoading }:any) {
 
 
   const formatTxns = (txns: string) => {
     return `${txns.slice(0, 2)}...${txns.slice(-3)}`;
   };
+
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Loading transactions...</p>
+      </div>
+    );
+  }
+  
   txns.sort((a: any, b: any) => b.transaction.timestamp - a.transaction.timestamp);
   return (
     <Card className='h-screen overflow-auto'>

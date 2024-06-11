@@ -14,6 +14,7 @@ export default function RegisterForm() {
     const [error, setError] = useState("");
     const {address: walletAddress, isConnected } = useAccount(); 
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
     
 
     useEffect(() => {
@@ -45,6 +46,7 @@ export default function RegisterForm() {
           setError("Password must be at least 8 characters long.");
           return;
         }
+        setIsLoading(true);
         try {
           const res = await fetch("api/register", {
             method: "POST",
@@ -67,6 +69,8 @@ export default function RegisterForm() {
           }
         } catch (error) {
           console.log("Error during registration: ", error);
+        } finally {
+          setIsLoading(false);
         }
       };
 
@@ -100,7 +104,7 @@ export default function RegisterForm() {
               />
               {isConnected && (
                 <Button className="bg-gray-600 hover:bg-gray-700 text-white font-bold cursor-pointer px-6 py-2 rounded-lg">
-                  Register
+                  {isLoading ? "Registering..." : "Register"}
                 </Button>
               )}
               {error && (

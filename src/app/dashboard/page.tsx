@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState, Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Sidebar from '../ui/Sidebar';
 import TabNavigation from '../ui/TabNavigation';
@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [selectedChain, setSelectedChain] = useState('Ethereum'); 
   const [swapTxn, setSwapTxn] = useState<Swap[]>([]);
   const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(false); 
   const router = useRouter();
 
   const tabs = ['All', 'Uniswap', 'Pancakeswap'];
@@ -29,22 +30,23 @@ export default function Dashboard() {
 
 
   useEffect(() => {
-    let timerId:any;
+    let timerId:any
     if (status === "loading") return;
 
     if (status === "unauthenticated") {
-      timerId = setTimeout(() => {
-        router.replace('/signin');
-      }, 2000)
+      timerId = setTimeout(()=>{
+        router.replace('/signin')
+      },2000)
+    
     }
     if (!session) {
-      timerId = setTimeout(() => {
-        router.replace('/signin');
-      }, 2000)
+      timerId = setTimeout(()=>{
+        router.replace('/signin')
+      },2000)
       router.replace('/signin');
     }
-    return (() => {
-      clearTimeout(timerId);
+    return(()=>{
+      clearTimeout(timerId)
     })
   }, [session, status, router]);
 
@@ -70,6 +72,7 @@ export default function Dashboard() {
       }
     }
     const getAllSwapTxns = async () => {
+      setIsLoading(true);
       try {
         let dexPromises = [];
         if(activeTab === "Uniswap") {
@@ -89,6 +92,8 @@ export default function Dashboard() {
         setSwapTxn(resultTxns);
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -130,7 +135,7 @@ export default function Dashboard() {
           <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
           <SelectDropdown chainOptions={chainOptions} setSelectedChain={setSelectedChain} />
         </div>
-        <TableList txns={swapTxn} />
+        <TableList txns={swapTxn} isLoading={isLoading}/>
       </div>
     </div>
     </Suspense>
